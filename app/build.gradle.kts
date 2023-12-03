@@ -1,3 +1,5 @@
+import com.google.devtools.ksp.gradle.KspTaskJvm
+
 plugins {
     id("idea")
     id("com.android.application")
@@ -74,6 +76,20 @@ android {
     packaging {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        }
+    }
+}
+
+// Add this to fix ksp debug error when using wire and ksp
+androidComponents {
+    onVariants { variant ->
+        // https://github.com/square/wire/issues/2335
+        val buildType = variant.buildType.toString()
+        val flavor = variant.flavorName.toString()
+        tasks.withType<KspTaskJvm> {
+            if (name.contains(buildType, ignoreCase = true) && name.contains(flavor, ignoreCase = true)) {
+                dependsOn("generate${flavor.capitalize()}${buildType.capitalize()}Protos")
+            }
         }
     }
 }
