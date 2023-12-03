@@ -1,4 +1,4 @@
-package com.anafthdev.comdeo.foundation.base
+package com.anafthdev.comdeo.foundation.base.ui
 
 import android.os.Parcelable
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.anafthdev.comdeo.foundation.base.UiEvent.DismissCurrentSnackbar.parse
+import com.anafthdev.comdeo.foundation.base.ui.UiEvent.DismissCurrentSnackbar.parse
 import com.anafthdev.comdeo.foundation.extension.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest

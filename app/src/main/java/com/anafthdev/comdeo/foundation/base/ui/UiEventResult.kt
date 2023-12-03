@@ -1,6 +1,6 @@
-package com.anafthdev.comdeo.foundation.base
+package com.anafthdev.comdeo.foundation.base.ui
 
-import com.anafthdev.comdeo.foundation.base.UiEvent
+import com.anafthdev.comdeo.foundation.base.ui.UiEvent
 
 /**
  * Result dari [UiEvent]

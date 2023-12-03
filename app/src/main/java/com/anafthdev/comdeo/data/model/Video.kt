@@ -1,6 +1,9 @@
 package com.anafthdev.comdeo.data.model
 
 import android.provider.MediaStore
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * @property id video id [MediaStore.Video.Media._ID]
@@ -10,11 +13,13 @@ import android.provider.MediaStore
  * @property duration duration in ms [MediaStore.Video.Media.DURATION]
  * @property size size in bytes [MediaStore.Video.Media.SIZE]
  */
+@Entity(tableName = "video")
 data class Video(
-    val id: Long,
-    val path: String,
-    val displayName: String,
-    val dateAdded: Long,
-    val duration: Long,
-    val size: Long,
+    @PrimaryKey
+    @ColumnInfo(name = "id_video") val id: Long,
+    @ColumnInfo(name = "path_video") val path: String,
+    @ColumnInfo(name = "displayName_video") val displayName: String,
+    @ColumnInfo(name = "dateAdded_video") val dateAdded: Long,
+    @ColumnInfo(name = "duration_video") val duration: Long,
+    @ColumnInfo(name = "size_video") val size: Long,
 )

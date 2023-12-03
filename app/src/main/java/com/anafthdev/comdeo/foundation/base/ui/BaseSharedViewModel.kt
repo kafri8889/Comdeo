@@ -1,11 +1,10 @@
-package com.dcns.dailycost.foundation.base
+package com.anafthdev.comdeo.foundation.base.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import com.anafthdev.comdeo.foundation.base.BaseViewModel
 
 /**
  * Shared view model, digunakan untuk berbagi state dalam scope navigation graph ([androidx.navigation.compose.navigation])

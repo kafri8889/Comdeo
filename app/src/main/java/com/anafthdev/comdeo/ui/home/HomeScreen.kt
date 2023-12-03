@@ -3,7 +3,7 @@ package com.anafthdev.comdeo.ui.home
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.anafthdev.comdeo.foundation.base.BaseScreenWrapper
+import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
 
 @Composable
 fun HomeScreen(

@@ -1,4 +1,4 @@
-package com.anafthdev.comdeo.foundation.base
+package com.anafthdev.comdeo.foundation.base.ui
 
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle

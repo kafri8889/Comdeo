@@ -9,7 +9,9 @@ import com.anafthdev.comdeo.data.Destinations
 import com.anafthdev.comdeo.ui.home.HomeScreen
 
 @Composable
-fun Comdeo() {
+fun Comdeo(
+    viewModel: ComdeoViewModel
+) {
 
     val navController = rememberNavController()
 

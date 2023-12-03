@@ -1,7 +1,7 @@
 package com.anafthdev.comdeo.ui.home
 
 import androidx.lifecycle.SavedStateHandle
-import com.anafthdev.comdeo.foundation.base.BaseViewModel
+import com.anafthdev.comdeo.foundation.base.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.anafthdev.comdeo.foundation.base
+package com.anafthdev.comdeo.foundation.base.ui
 
 import android.content.Context
 import android.widget.Toast
