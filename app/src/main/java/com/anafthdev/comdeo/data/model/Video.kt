@@ -1,9 +1,11 @@
 package com.anafthdev.comdeo.data.model
 
+import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 /**
  * @property id video id [MediaStore.Video.Media._ID]
@@ -13,6 +15,7 @@ import androidx.room.PrimaryKey
  * @property duration duration in ms [MediaStore.Video.Media.DURATION]
  * @property size size in bytes [MediaStore.Video.Media.SIZE]
  */
+@Parcelize
 @Entity(tableName = "video")
 data class Video(
     @PrimaryKey
@@ -22,4 +25,4 @@ data class Video(
     @ColumnInfo(name = "dateAdded_video") val dateAdded: Long,
     @ColumnInfo(name = "duration_video") val duration: Long,
     @ColumnInfo(name = "size_video") val size: Long,
-)
+): Parcelable

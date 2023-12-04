@@ -14,7 +14,7 @@ object VideoUtil {
             val projection = arrayOf(
                 MediaStore.Video.Media._ID,
                 MediaStore.Video.Media.DISPLAY_NAME,
-                MediaStore.Video.Media.DATE_ADDED,
+                MediaStore.Video.Media.DATE_MODIFIED,
                 MediaStore.Video.Media.DURATION,
                 MediaStore.Video.Media.SIZE,
             )
@@ -36,7 +36,7 @@ object VideoUtil {
             if (cursor != null) {
                 cursorIndexVideoID = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
                 cursorIndexVideoDisplayName = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
-                cursorIndexVideoDateAdded = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED)
+                cursorIndexVideoDateAdded = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_MODIFIED)
                 cursorIndexVideoDuration = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
                 cursorIndexVideoSize = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
 
@@ -54,7 +54,7 @@ object VideoUtil {
                             id = id,
                             path = path,
                             displayName = displayName,
-                            dateAdded = dateAdded,
+                            dateAdded = dateAdded * 1000,
                             duration = duration,
                             size = size
                         )

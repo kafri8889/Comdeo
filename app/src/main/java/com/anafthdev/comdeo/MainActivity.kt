@@ -36,8 +36,8 @@ class MainActivity: ComponentActivity() {
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
+    override fun onStart() {
+        super.onStart()
         viewModel.insertVideo(VideoUtil.findAllVideo(this))
     }
 }

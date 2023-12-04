@@ -182,6 +182,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("com.squareup.wire:wire-runtime:4.4.3")
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
 }
