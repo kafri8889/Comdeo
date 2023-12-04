@@ -6,6 +6,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavDeepLink
 
 object DestinationRoute {
+    const val SEARCH = "search"
     const val HOME = "home"
 }
 
@@ -41,5 +42,9 @@ object Destinations {
 
     val home = Destination(
         route = DestinationRoute.HOME
+    )
+
+    val search = Destination(
+        route = DestinationRoute.SEARCH
     )
 }
