@@ -81,4 +81,21 @@ object VideoUtil {
         }
     }
 
+    /**
+     * Convert width and height to resolution like 240p, 360p, etc.
+     */
+    fun getResolution(width: Int, height: Int): String {
+        return when {
+            width >= 7680 && height >= 4320 -> "8K"
+            width >= 3840 && height >= 2160 -> "4K"
+            width >= 1920 && height >= 1080 -> "1080p"
+            width >= 1280 && height >= 720 -> "720p"
+            width >= 854 && height >= 480 -> "480p"
+            width >= 640 && height >= 360 -> "360p"
+            width >= 426 && height >= 240 -> "240p"
+            width >= 256 && height >= 144 -> "144p"
+            else -> ""
+        }
+    }
+
 }

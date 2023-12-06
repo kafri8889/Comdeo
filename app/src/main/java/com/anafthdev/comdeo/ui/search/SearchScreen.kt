@@ -115,9 +115,10 @@ private fun SearchScreenContent(
 
     VideoList(
         videos = state.result,
-        onVideoClicked = { video ->
+        onClick = { video ->
 
         },
+        onLongClick = {},
         modifier = modifier
     )
 

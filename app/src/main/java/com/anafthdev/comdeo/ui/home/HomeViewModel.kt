@@ -53,6 +53,32 @@ class HomeViewModel @Inject constructor(
             is HomeAction.SortVideoBy -> viewModelScope.launch {
                 _sortVideoBy.update { action.sortVideoBy }
             }
+            is HomeAction.UpdateSelectedVideo -> viewModelScope.launch {
+                updateState {
+                    copy(
+                        selectedVideos = selectedVideos.toMutableList().apply {
+                            if (action.video in this) remove(action.video)
+                            else add(action.video)
+                        }
+                    )
+                }
+            }
+            is HomeAction.ShowVideoCheckbox -> viewModelScope.launch {
+                updateState {
+                    copy(
+                        showVideoCheckbox = action.show,
+                        // Remove selected video when showVideoCheckbox is false
+                        selectedVideos = if (!action.show) emptyList() else selectedVideos
+                    )
+                }
+            }
+            is HomeAction.SelectAllVideo -> viewModelScope.launch {
+                updateState {
+                    copy(
+                        selectedVideos = if (action.select) ArrayList(videos) else emptyList()
+                    )
+                }
+            }
         }
     }
 }

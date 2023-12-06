@@ -18,7 +18,10 @@ import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
 fun VideoList(
     videos: List<Video>,
     modifier: Modifier = Modifier,
-    onVideoClicked: (Video) -> Unit
+    selectedVideos: List<Video> = emptyList(),
+    showCheckbox: Boolean = false,
+    onLongClick: (Video) -> Unit,
+    onClick: (Video) -> Unit
 ) {
 
     val preloadingData = rememberGlidePreloadingData(
@@ -39,8 +42,13 @@ fun VideoList(
 
             VideoItem(
                 video = video,
+                isCheckboxVisible = showCheckbox,
+                checked = video in selectedVideos,
                 onClick = {
-                    onVideoClicked(video)
+                    onClick(video)
+                },
+                onLongClick = {
+                    onLongClick(video)
                 }
             )
         }

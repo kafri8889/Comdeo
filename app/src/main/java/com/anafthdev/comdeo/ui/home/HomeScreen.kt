@@ -1,5 +1,6 @@
 package com.anafthdev.comdeo.ui.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,7 +20,9 @@ import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.Destination
 import com.anafthdev.comdeo.data.Destinations
 import com.anafthdev.comdeo.data.SortVideoBy
+import com.anafthdev.comdeo.data.model.Video
 import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
+import com.anafthdev.comdeo.foundation.uicomponent.CircleCheckbox
 import com.anafthdev.comdeo.foundation.uicomponent.ComdeoDropdownMenu
 import com.anafthdev.comdeo.foundation.uicomponent.ComdeoDropdownMenuItem
 import com.anafthdev.comdeo.foundation.uicomponent.VideoList
@@ -33,36 +36,76 @@ fun HomeScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    BackHandler(state.showVideoCheckbox) {
+        viewModel.onAction(HomeAction.ShowVideoCheckbox(false))
+    }
+
     BaseScreenWrapper(
         viewModel = viewModel,
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(id = R.string.video))
+                    if (!state.showVideoCheckbox) {
+                        Text(stringResource(id = R.string.video))
+                    }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            navigateTo(Destinations.search)
+                    if (state.showVideoCheckbox) {
+                        CircleCheckbox(
+                            checked = state.videos.size == state.selectedVideos.size,
+                            onCheckedChange = { checked ->
+                                viewModel.onAction(HomeAction.SelectAllVideo(checked))
+                            }
+                        )
+                    } else {
+                        IconButton(
+                            onClick = {
+                                navigateTo(Destinations.search)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search_normal),
+                                contentDescription = null
+                            )
                         }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_search_normal),
-                            contentDescription = null
+
+                        MoreIconButton(
+                            onSortBy = { sortVideoBy ->
+                                viewModel.onAction(HomeAction.SortVideoBy(sortVideoBy))
+                            }
                         )
                     }
-
-                    MoreIconButton(
-                        onSortBy = { sortVideoBy ->
-                            viewModel.onAction(HomeAction.SortVideoBy(sortVideoBy))
+                },
+                navigationIcon = {
+                    if (state.showVideoCheckbox) {
+                        IconButton(
+                            onClick = {
+                                viewModel.onAction(HomeAction.ShowVideoCheckbox(false))
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_close),
+                                contentDescription = null
+                            )
                         }
-                    )
+                    }
                 }
             )
         }
     ) { scaffoldPadding ->
         HomeScreenContent(
             state = state,
+            onClick = { video ->
+                if (state.showVideoCheckbox) {
+                    viewModel.onAction(HomeAction.UpdateSelectedVideo(video))
+                } else {
+
+                }
+            },
+            onLongClick = { video ->
+                viewModel.onAction(HomeAction.ShowVideoCheckbox(!state.showVideoCheckbox))
+                viewModel.onAction(HomeAction.UpdateSelectedVideo(video))
+            },
             modifier = Modifier
                 .padding(scaffoldPadding)
         )
@@ -72,15 +115,18 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     state: HomeState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (Video) -> Unit,
+    onLongClick: (Video) -> Unit
 ) {
 
     VideoList(
+        modifier = modifier,
         videos = state.videos,
-        onVideoClicked = { video ->
-
-        },
-        modifier = modifier
+        selectedVideos = state.selectedVideos,
+        showCheckbox = state.showVideoCheckbox,
+        onLongClick = onLongClick,
+        onClick = onClick
     )
 
 }
