@@ -6,8 +6,8 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavDeepLink
 
 object DestinationRoute {
-    const val SEARCH = "search"
-    const val HOME = "home"
+	const val SEARCH = "search"
+	const val HOME = "home"
 }
 
 /**
@@ -17,34 +17,34 @@ object DestinationArgument {
 }
 
 data class Destination(
-    val route: String,
-    val arguments: List<NamedNavArgument> = emptyList(),
-    val deepLinks: List<NavDeepLink> = emptyList(),
-    @StringRes val title: Int? = null,
-    @StringRes val subtitle: Int? = null,
-    @DrawableRes val icon: Int? = null
+	val route: String,
+	val arguments: List<NamedNavArgument> = emptyList(),
+	val deepLinks: List<NavDeepLink> = emptyList(),
+	@StringRes val title: Int? = null,
+	@StringRes val subtitle: Int? = null,
+	@DrawableRes val icon: Int? = null
 ) {
-    /**
-     * @param value {key: value}
-     */
-    fun createRoute(vararg value: Pair<Any, Any?>): Destination {
-        var mRoute = route
+	/**
+	 * @param value {key: value}
+	 */
+	fun createRoute(vararg value: Pair<Any, Any?>): Destination {
+		var mRoute = route
 
-        value.forEach { (key, value) ->
-            mRoute = mRoute.replace("{$key}", value.toString())
-        }
+		value.forEach { (key, value) ->
+			mRoute = mRoute.replace("{$key}", value.toString())
+		}
 
-        return Destination(mRoute, arguments)
-    }
+		return Destination(mRoute, arguments)
+	}
 }
 
 object Destinations {
 
-    val home = Destination(
-        route = DestinationRoute.HOME
-    )
+	val home = Destination(
+		route = DestinationRoute.HOME
+	)
 
-    val search = Destination(
-        route = DestinationRoute.SEARCH
-    )
+	val search = Destination(
+		route = DestinationRoute.SEARCH
+	)
 }

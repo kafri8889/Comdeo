@@ -13,53 +13,53 @@ import com.anafthdev.comdeo.ui.search.SearchScreen
 
 @Composable
 fun Comdeo(
-    viewModel: ComdeoViewModel
+	viewModel: ComdeoViewModel
 ) {
 
-    val navController = rememberNavController()
+	val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Destinations.home.route,
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                animationSpec = tween(512)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Start,
-                animationSpec = tween(512)
-            )
-        },
-        popEnterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                animationSpec = tween(512)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.End,
-                animationSpec = tween(512)
-            )
-        }
-    ) {
-        composable(Destinations.home.route) { backEntry ->
-            HomeScreen(
-                viewModel = hiltViewModel(backEntry),
-                navigateTo = { destination ->
-                    navController.navigate(destination.route)
-                }
-            )
-        }
+	NavHost(
+		navController = navController,
+		startDestination = Destinations.home.route,
+		enterTransition = {
+			slideIntoContainer(
+				towards = AnimatedContentTransitionScope.SlideDirection.Start,
+				animationSpec = tween(512)
+			)
+		},
+		exitTransition = {
+			slideOutOfContainer(
+				towards = AnimatedContentTransitionScope.SlideDirection.Start,
+				animationSpec = tween(512)
+			)
+		},
+		popEnterTransition = {
+			slideIntoContainer(
+				towards = AnimatedContentTransitionScope.SlideDirection.End,
+				animationSpec = tween(512)
+			)
+		},
+		popExitTransition = {
+			slideOutOfContainer(
+				towards = AnimatedContentTransitionScope.SlideDirection.End,
+				animationSpec = tween(512)
+			)
+		}
+	) {
+		composable(Destinations.home.route) { backEntry ->
+			HomeScreen(
+				viewModel = hiltViewModel(backEntry),
+				navigateTo = { destination ->
+					navController.navigate(destination.route)
+				}
+			)
+		}
 
-        composable(Destinations.search.route) { backEntry ->
-            SearchScreen(
-                viewModel = hiltViewModel(backEntry),
-                navigateUp = navController::popBackStack
-            )
-        }
-    }
+		composable(Destinations.search.route) { backEntry ->
+			SearchScreen(
+				viewModel = hiltViewModel(backEntry),
+				navigateUp = navController::popBackStack
+			)
+		}
+	}
 }

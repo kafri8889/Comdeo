@@ -8,26 +8,26 @@ import com.anafthdev.comdeo.data.datasource.local.dao.VideoDao
 import com.anafthdev.comdeo.data.model.Video
 
 @Database(
-    entities = [
-        Video::class
-    ],
-    version = 1,
-    exportSchema = false
+	entities = [
+		Video::class
+	],
+	version = 1,
+	exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase() {
 
-    abstract fun videoDao(): VideoDao
+	abstract fun videoDao(): VideoDao
 
-    companion object {
-        private var INSTANCE: AppDatabase? = null
+	companion object {
+		private var INSTANCE: AppDatabase? = null
 
-        fun getInstance(context: Context): AppDatabase {
-            return INSTANCE ?: Room.databaseBuilder(
-                context,
-                AppDatabase::class.java,
-                "app.db"
-            ).build().also { INSTANCE = it }
-        }
-    }
+		fun getInstance(context: Context): AppDatabase {
+			return INSTANCE ?: Room.databaseBuilder(
+				context,
+				AppDatabase::class.java,
+				"app.db"
+			).build().also { INSTANCE = it }
+		}
+	}
 
 }

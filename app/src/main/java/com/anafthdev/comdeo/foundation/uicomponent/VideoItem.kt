@@ -44,139 +44,139 @@ import com.bumptech.glide.integration.compose.GlideImage
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VideoItem(
-    video: Video,
-    modifier: Modifier = Modifier,
-    isCheckboxVisible: Boolean = false,
-    checked: Boolean = false,
-    onLongClick: () -> Unit,
-    onClick: () -> Unit
+	video: Video,
+	modifier: Modifier = Modifier,
+	isCheckboxVisible: Boolean = false,
+	checked: Boolean = false,
+	onLongClick: () -> Unit,
+	onClick: () -> Unit
 ) {
 
-    BoxWithConstraints(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier
-                .padding(8.dp)
-        ) {
-            VideoThumbnail(
-                video = video,
-                maxWidth = this@BoxWithConstraints.maxWidth
-            )
+	BoxWithConstraints(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.fillMaxWidth()
+			.combinedClickable(
+				onClick = onClick,
+				onLongClick = onLongClick
+			)
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.spacedBy(8.dp),
+			modifier = modifier
+				.padding(8.dp)
+		) {
+			VideoThumbnail(
+				video = video,
+				maxWidth = this@BoxWithConstraints.maxWidth
+			)
 
-            VideoInfo(
-                displayName = video.displayName,
-                dateAdded = video.dateAdded,
-                modifier = Modifier
-                    .align(Alignment.Top)
-                    .weight(1f)
-            )
-            
-            AnimatedVisibility(
-                visible = isCheckboxVisible,
-                enter = scaleIn(tween(256)),
-                exit = scaleOut(tween(256))
-            ) {
-                CircleCheckbox(
-                    checked = checked,
-                    onCheckedChange = {
-                        onClick()
-                    }
-                )
-            }
-        }
-    }
+			VideoInfo(
+				displayName = video.displayName,
+				dateAdded = video.dateAdded,
+				modifier = Modifier
+					.align(Alignment.Top)
+					.weight(1f)
+			)
+
+			AnimatedVisibility(
+				visible = isCheckboxVisible,
+				enter = scaleIn(tween(256)),
+				exit = scaleOut(tween(256))
+			) {
+				CircleCheckbox(
+					checked = checked,
+					onCheckedChange = {
+						onClick()
+					}
+				)
+			}
+		}
+	}
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun VideoThumbnail(
-    video: Video,
-    maxWidth: Dp,
-    modifier: Modifier = Modifier
+	video: Video,
+	maxWidth: Dp,
+	modifier: Modifier = Modifier
 ) {
-    val resolution = remember(video) {
-        VideoUtil.getResolution(video.width, video.height)
-    }
+	val resolution = remember(video) {
+		VideoUtil.getResolution(video.width, video.height)
+	}
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .width(maxWidth / 3.2f)
-            .aspectRatio(1.4f / 1f)
-            .clip(RoundedCornerShape(16))
-            .background(Color.LightGray)
-            .then(modifier)
-    ) {
-        if (resolution.isNotBlank()) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .padding(4.dp)
-                    .clip(RoundedCornerShape(24))
-                    .background(Color.Black.copy(alpha = 0.32f))
-                    .zIndex(10f)
-                    .align(Alignment.TopStart)
-            ) {
-                Text(
-                    text = resolution,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-            }
-        }
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = Modifier
+			.width(maxWidth / 3.2f)
+			.aspectRatio(1.4f / 1f)
+			.clip(RoundedCornerShape(16))
+			.background(Color.LightGray)
+			.then(modifier)
+	) {
+		if (resolution.isNotBlank()) {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+					.padding(4.dp)
+					.clip(RoundedCornerShape(24))
+					.background(Color.Black.copy(alpha = 0.32f))
+					.zIndex(10f)
+					.align(Alignment.TopStart)
+			) {
+				Text(
+					text = resolution,
+					style = MaterialTheme.typography.labelSmall,
+					modifier = Modifier
+						.padding(4.dp)
+				)
+			}
+		}
 
-        Icon(
-            painter = painterResource(id = R.drawable.ic_video),
-            contentDescription = null,
-            tint = Color.DarkGray,
-            modifier = Modifier
-                .zIndex(1f)
-        )
+		Icon(
+			painter = painterResource(id = R.drawable.ic_video),
+			contentDescription = null,
+			tint = Color.DarkGray,
+			modifier = Modifier
+				.zIndex(1f)
+		)
 
-        GlideImage(
-            model = video.path.toUri(),
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-            modifier = Modifier
-                .matchParentSize()
-                .zIndex(2f)
-        )
-    }
+		GlideImage(
+			model = video.path.toUri(),
+			contentScale = ContentScale.Crop,
+			contentDescription = null,
+			modifier = Modifier
+				.matchParentSize()
+				.zIndex(2f)
+		)
+	}
 }
 
 @Composable
 private fun VideoInfo(
-    displayName: String,
-    dateAdded: Long,
-    modifier: Modifier = Modifier
+	displayName: String,
+	dateAdded: Long,
+	modifier: Modifier = Modifier
 ) {
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
-        Text(
-            text = displayName,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.titleMedium
-        )
+	Column(
+		verticalArrangement = Arrangement.spacedBy(4.dp),
+		modifier = modifier
+	) {
+		Text(
+			text = displayName,
+			maxLines = 1,
+			overflow = TextOverflow.Ellipsis,
+			style = MaterialTheme.typography.titleMedium
+		)
 
-        Text(
-            text = DateUtil.formatMedium(dateAdded),
-            style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.Light
-            )
-        )
-    }
+		Text(
+			text = DateUtil.formatMedium(dateAdded),
+			style = MaterialTheme.typography.labelMedium.copy(
+				fontWeight = FontWeight.Light
+			)
+		)
+	}
 }

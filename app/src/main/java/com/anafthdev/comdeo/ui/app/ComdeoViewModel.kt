@@ -10,13 +10,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ComdeoViewModel @Inject constructor(
-    private val videoRepository: VideoRepository
+	private val videoRepository: VideoRepository
 ): ViewModel() {
 
-    fun insertVideo(video: Collection<Video>) {
-        viewModelScope.launch {
-            videoRepository.insert(video)
-        }
-    }
+	fun insertVideo(video: Collection<Video>) {
+		viewModelScope.launch {
+			videoRepository.insert(video)
+		}
+	}
 
 }

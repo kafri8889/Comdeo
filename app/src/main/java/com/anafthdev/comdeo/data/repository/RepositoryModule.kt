@@ -10,9 +10,9 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 class RepositoryModule {
 
-    @Provides
-    fun provideVideoRepository(
-        videoDao: VideoDao
-    ): VideoRepository = VideoRepository(videoDao)
+	@Provides
+	fun provideVideoRepository(
+		videoDao: VideoDao
+	): VideoRepository = VideoRepository(videoDao)
 
 }

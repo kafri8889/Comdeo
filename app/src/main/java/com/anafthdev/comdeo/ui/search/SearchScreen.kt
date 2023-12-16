@@ -29,97 +29,102 @@ import com.anafthdev.comdeo.foundation.uicomponent.VideoList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel,
-    navigateUp: () -> Unit
+	viewModel: SearchViewModel,
+	navigateUp: () -> Unit
 ) {
 
-    val keyboardController = LocalSoftwareKeyboardController.current
+	val keyboardController = LocalSoftwareKeyboardController.current
 
-    val state by viewModel.state.collectAsStateWithLifecycle()
+	val state by viewModel.state.collectAsStateWithLifecycle()
 
-    BaseScreenWrapper(
-        viewModel = viewModel,
-        topBar = {
-            TopAppBar(
-                title = {
-                    BasicTextField(
-                        value = state.query,
-                        singleLine = true,
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(
-                            color = LocalContentColor.current
-                        ),
-                        onValueChange = { query ->
-                            viewModel.onAction(SearchAction.SetQuery(query))
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                            }
-                        ),
-                        cursorBrush = Brush.linearGradient(listOf(LocalContentColor.current, LocalContentColor.current)),
-                        decorationBox = { innerTextField ->
-                            Box{
-                                if (state.query.isEmpty()) {
-                                    Text(
-                                        text = stringResource(id = R.string.search_by_name),
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                }
+	BaseScreenWrapper(
+		viewModel = viewModel,
+		topBar = {
+			TopAppBar(
+				title = {
+					BasicTextField(
+						value = state.query,
+						singleLine = true,
+						textStyle = MaterialTheme.typography.bodyLarge.copy(
+							color = LocalContentColor.current
+						),
+						onValueChange = { query ->
+							viewModel.onAction(SearchAction.SetQuery(query))
+						},
+						keyboardOptions = KeyboardOptions(
+							imeAction = ImeAction.Done
+						),
+						keyboardActions = KeyboardActions(
+							onDone = {
+								keyboardController?.hide()
+							}
+						),
+						cursorBrush = Brush.linearGradient(
+							listOf(
+								LocalContentColor.current,
+								LocalContentColor.current
+							)
+						),
+						decorationBox = { innerTextField ->
+							Box {
+								if (state.query.isEmpty()) {
+									Text(
+										text = stringResource(id = R.string.search_by_name),
+										style = MaterialTheme.typography.bodyLarge
+									)
+								}
 
-                                innerTextField()
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = navigateUp) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow_left),
-                            contentDescription = null
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            viewModel.onAction(SearchAction.SetQuery(""))
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_close),
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        }
-    ) { scaffoldPadding ->
-        SearchScreenContent(
-            state = state,
-            modifier = Modifier
-                .padding(scaffoldPadding)
-        )
-    }
+								innerTextField()
+							}
+						},
+						modifier = Modifier
+							.fillMaxWidth()
+					)
+				},
+				navigationIcon = {
+					IconButton(onClick = navigateUp) {
+						Icon(
+							painter = painterResource(id = R.drawable.ic_arrow_left),
+							contentDescription = null
+						)
+					}
+				},
+				actions = {
+					IconButton(
+						onClick = {
+							viewModel.onAction(SearchAction.SetQuery(""))
+						}
+					) {
+						Icon(
+							painter = painterResource(id = R.drawable.ic_close),
+							contentDescription = null
+						)
+					}
+				}
+			)
+		}
+	) { scaffoldPadding ->
+		SearchScreenContent(
+			state = state,
+			modifier = Modifier
+				.padding(scaffoldPadding)
+		)
+	}
 }
 
 @Composable
 private fun SearchScreenContent(
-    state: SearchState,
-    modifier: Modifier = Modifier
+	state: SearchState,
+	modifier: Modifier = Modifier
 ) {
 
-    VideoList(
-        videos = state.result,
-        onClick = { video ->
+	VideoList(
+		videos = state.result,
+		onClick = { video ->
 
-        },
-        onLongClick = {},
-        modifier = modifier
-    )
+		},
+		onLongClick = {},
+		modifier = modifier
+	)
 
 }

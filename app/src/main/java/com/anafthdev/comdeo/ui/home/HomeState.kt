@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class HomeState(
-    val showVideoCheckbox: Boolean = false,
-    val selectedVideos: List<Video> = emptyList(),
-    val videos: List<Video> = emptyList()
+	val showVideoCheckbox: Boolean = false,
+	val selectedVideos: List<Video> = emptyList(),
+	val videos: List<Video> = emptyList()
 ): Parcelable

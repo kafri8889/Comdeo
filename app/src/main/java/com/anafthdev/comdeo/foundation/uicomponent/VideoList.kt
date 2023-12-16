@@ -16,42 +16,42 @@ import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
  */
 @Composable
 fun VideoList(
-    videos: List<Video>,
-    modifier: Modifier = Modifier,
-    selectedVideos: List<Video> = emptyList(),
-    showCheckbox: Boolean = false,
-    onLongClick: (Video) -> Unit,
-    onClick: (Video) -> Unit
+	videos: List<Video>,
+	modifier: Modifier = Modifier,
+	selectedVideos: List<Video> = emptyList(),
+	showCheckbox: Boolean = false,
+	onLongClick: (Video) -> Unit,
+	onClick: (Video) -> Unit
 ) {
 
-    val preloadingData = rememberGlidePreloadingData(
-        dataSize = videos.size,
-        dataGetter = { i -> videos[i] },
-        preloadImageSize = Size(512f, 512f)
-    ) { video, requestBuilder ->
-        requestBuilder.load(video.path.toUri())
-    }
+	val preloadingData = rememberGlidePreloadingData(
+		dataSize = videos.size,
+		dataGetter = { i -> videos[i] },
+		preloadImageSize = Size(512f, 512f)
+	) { video, requestBuilder ->
+		requestBuilder.load(video.path.toUri())
+	}
 
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
-    ) {
-        items(preloadingData.size) { index ->
-            val (video, _) = preloadingData[index]
+	LazyColumn(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.spacedBy(8.dp),
+		modifier = modifier
+	) {
+		items(preloadingData.size) { index ->
+			val (video, _) = preloadingData[index]
 
-            VideoItem(
-                video = video,
-                isCheckboxVisible = showCheckbox,
-                checked = video in selectedVideos,
-                onClick = {
-                    onClick(video)
-                },
-                onLongClick = {
-                    onLongClick(video)
-                }
-            )
-        }
-    }
+			VideoItem(
+				video = video,
+				isCheckboxVisible = showCheckbox,
+				checked = video in selectedVideos,
+				onClick = {
+					onClick(video)
+				},
+				onLongClick = {
+					onLongClick(video)
+				}
+			)
+		}
+	}
 
 }

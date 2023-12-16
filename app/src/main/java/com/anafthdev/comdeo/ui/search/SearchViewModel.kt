@@ -12,42 +12,42 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val videoRepository: VideoRepository,
-    savedStateHandle: SavedStateHandle
+	private val videoRepository: VideoRepository,
+	savedStateHandle: SavedStateHandle
 ): BaseViewModel<SearchState, SearchAction>(
-    savedStateHandle = savedStateHandle,
-    defaultState = SearchState()
+	savedStateHandle = savedStateHandle,
+	defaultState = SearchState()
 ) {
 
-    init {
-        viewModelScope.launch {
-            combine(
-                videoRepository.getAll(),
-                state
-            ) { videos, searchState ->
-                videos to searchState
-            }.collectLatest { (videos, searchState) ->
-                updateState {
-                    copy(
-                        result = videos.filter {
-                            it.displayName.contains(searchState.query, true)
-                        }
-                    )
-                }
-            }
-        }
-    }
+	init {
+		viewModelScope.launch {
+			combine(
+				videoRepository.getAll(),
+				state
+			) { videos, searchState ->
+				videos to searchState
+			}.collectLatest { (videos, searchState) ->
+				updateState {
+					copy(
+						result = videos.filter {
+							it.displayName.contains(searchState.query, true)
+						}
+					)
+				}
+			}
+		}
+	}
 
-    override fun onAction(action: SearchAction) {
-        when (action) {
-            is SearchAction.SetQuery -> viewModelScope.launch {
-                updateState {
-                    copy(
-                        query = action.query
-                    )
-                }
-            }
-        }
-    }
+	override fun onAction(action: SearchAction) {
+		when (action) {
+			is SearchAction.SetQuery -> viewModelScope.launch {
+				updateState {
+					copy(
+						query = action.query
+					)
+				}
+			}
+		}
+	}
 
 }

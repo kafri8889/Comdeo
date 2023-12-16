@@ -12,28 +12,28 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class VideoDao {
 
-    @Query("select * from video")
-    abstract fun getAll(): Flow<List<Video>>
+	@Query("select * from video")
+	abstract fun getAll(): Flow<List<Video>>
 
-    @Query("delete from video")
-    abstract fun deleteAll()
+	@Query("delete from video")
+	abstract fun deleteAll()
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(vararg video: Video)
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	abstract suspend fun insert(vararg video: Video)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insert(videos: Collection<Video>)
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	abstract suspend fun insert(videos: Collection<Video>)
 
-    @Update
-    abstract suspend fun update(vararg video: Video)
+	@Update
+	abstract suspend fun update(vararg video: Video)
 
-    @Update
-    abstract suspend fun update(videos: Collection<Video>)
+	@Update
+	abstract suspend fun update(videos: Collection<Video>)
 
-    @Delete
-    abstract suspend fun delete(vararg video: Video)
+	@Delete
+	abstract suspend fun delete(vararg video: Video)
 
-    @Delete
-    abstract suspend fun delete(videos: Collection<Video>)
+	@Delete
+	abstract suspend fun delete(videos: Collection<Video>)
 
 }

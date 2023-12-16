@@ -10,6 +10,6 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class SearchState(
-    val query: String = "",
-    val result: List<Video> = emptyList()
+	val query: String = "",
+	val result: List<Video> = emptyList()
 ): Parcelable

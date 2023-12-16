@@ -17,27 +17,27 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity: ComponentActivity() {
 
-    private val viewModel: ComdeoViewModel by viewModels()
+	private val viewModel: ComdeoViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        // Set system bar and navigation bar color to transparent
-        enableEdgeToEdge(
-            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
-            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
-        )
-        super.onCreate(savedInstanceState)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		// Set system bar and navigation bar color to transparent
+		enableEdgeToEdge(
+			navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+			statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT)
+		)
+		super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+		WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        setContent {
-            ComdeoTheme {
-                Comdeo(viewModel)
-            }
-        }
-    }
+		setContent {
+			ComdeoTheme {
+				Comdeo(viewModel)
+			}
+		}
+	}
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.insertVideo(VideoUtil.findAllVideo(this))
-    }
+	override fun onStart() {
+		super.onStart()
+		viewModel.insertVideo(VideoUtil.findAllVideo(this))
+	}
 }

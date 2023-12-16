@@ -18,67 +18,70 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val videoRepository: VideoRepository,
-    savedStateHandle: SavedStateHandle
+	private val videoRepository: VideoRepository,
+	savedStateHandle: SavedStateHandle
 ): BaseViewModel<HomeState, HomeAction>(
-    savedStateHandle = savedStateHandle,
-    defaultState = HomeState()
+	savedStateHandle = savedStateHandle,
+	defaultState = HomeState()
 ) {
 
-    private val _sortVideoBy = MutableStateFlow(SortVideoBy.Name)
+	private val _sortVideoBy = MutableStateFlow(SortVideoBy.Name)
 
-    init {
-        viewModelScope.launch {
-            // Get videos from repository and apply sort
-            _sortVideoBy.flatMapLatest { sortBy ->
-                videoRepository.getAll().map {
-                    when (sortBy) {
-                        SortVideoBy.Name -> it.sortedBy { it.displayName }
-                        SortVideoBy.DateAdded -> it.sortedBy { it.dateAdded }
-                        SortVideoBy.Duration -> it.sortedBy { it.duration }
-                    }
-                }
-            }.collectLatest { videos ->
-                updateState {
-                    copy(
-                        videos = videos
-                    )
-                }
-            }
-        }
-    }
+	init {
+		viewModelScope.launch {
+			// Get videos from repository and apply sort
+			_sortVideoBy.flatMapLatest { sortBy ->
+				videoRepository.getAll().map {
+					when (sortBy) {
+						SortVideoBy.Name -> it.sortedBy { it.displayName }
+						SortVideoBy.DateAdded -> it.sortedBy { it.dateAdded }
+						SortVideoBy.Duration -> it.sortedBy { it.duration }
+					}
+				}
+			}.collectLatest { videos ->
+				updateState {
+					copy(
+						videos = videos
+					)
+				}
+			}
+		}
+	}
 
-    override fun onAction(action: HomeAction) {
-        when (action) {
-            is HomeAction.SortVideoBy -> viewModelScope.launch {
-                _sortVideoBy.update { action.sortVideoBy }
-            }
-            is HomeAction.UpdateSelectedVideo -> viewModelScope.launch {
-                updateState {
-                    copy(
-                        selectedVideos = selectedVideos.toMutableList().apply {
-                            if (action.video in this) remove(action.video)
-                            else add(action.video)
-                        }
-                    )
-                }
-            }
-            is HomeAction.ShowVideoCheckbox -> viewModelScope.launch {
-                updateState {
-                    copy(
-                        showVideoCheckbox = action.show,
-                        // Remove selected video when showVideoCheckbox is false
-                        selectedVideos = if (!action.show) emptyList() else selectedVideos
-                    )
-                }
-            }
-            is HomeAction.SelectAllVideo -> viewModelScope.launch {
-                updateState {
-                    copy(
-                        selectedVideos = if (action.select) ArrayList(videos) else emptyList()
-                    )
-                }
-            }
-        }
-    }
+	override fun onAction(action: HomeAction) {
+		when (action) {
+			is HomeAction.SortVideoBy -> viewModelScope.launch {
+				_sortVideoBy.update { action.sortVideoBy }
+			}
+
+			is HomeAction.UpdateSelectedVideo -> viewModelScope.launch {
+				updateState {
+					copy(
+						selectedVideos = selectedVideos.toMutableList().apply {
+							if (action.video in this) remove(action.video)
+							else add(action.video)
+						}
+					)
+				}
+			}
+
+			is HomeAction.ShowVideoCheckbox -> viewModelScope.launch {
+				updateState {
+					copy(
+						showVideoCheckbox = action.show,
+						// Remove selected video when showVideoCheckbox is false
+						selectedVideos = if (!action.show) emptyList() else selectedVideos
+					)
+				}
+			}
+
+			is HomeAction.SelectAllVideo -> viewModelScope.launch {
+				updateState {
+					copy(
+						selectedVideos = if (action.select) ArrayList(videos) else emptyList()
+					)
+				}
+			}
+		}
+	}
 }

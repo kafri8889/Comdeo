@@ -13,14 +13,14 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 class DatasourceModule {
 
-    @Provides
-    fun provideAppDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase = AppDatabase.getInstance(context)
+	@Provides
+	fun provideAppDatabase(
+		@ApplicationContext context: Context
+	): AppDatabase = AppDatabase.getInstance(context)
 
-    @Provides
-    fun provideVideoDao(
-        appDatabase: AppDatabase
-    ): VideoDao = appDatabase.videoDao()
+	@Provides
+	fun provideVideoDao(
+		appDatabase: AppDatabase
+	): VideoDao = appDatabase.videoDao()
 
 }
