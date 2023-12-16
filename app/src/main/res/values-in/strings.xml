@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="video">Video</string>
+    <string name="search_by_name">Cari dengan nama</string>
+    <string name="sort">Urutkan</string>
+    <string name="by_name">Menurut nama</string>
+    <string name="by_date_added">Menurut tanggal ditambahkan</string>
+    <string name="by_duration">Menurut durasi</string>
+    <string name="share">Bagikan</string>
+    <string name="edit">Edit</string>
+    <string name="change_name">Ubah nama</string>
+    <string name="info">Info</string>
+    <string name="delete">Hapus</string>
+</resources>

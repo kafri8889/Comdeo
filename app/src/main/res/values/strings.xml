@@ -1,9 +1,15 @@
 <resources>
-    <string name="app_name">Comdeo</string>
+    <string name="app_name" translatable="false">Comdeo</string>
+
     <string name="video">Video</string>
     <string name="search_by_name">Search by name</string>
     <string name="sort">Sort</string>
     <string name="by_name">By name</string>
     <string name="by_date_added">By date added</string>
     <string name="by_duration">By duration</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="change_name">Change name</string>
+    <string name="info">Info</string>
+    <string name="delete">Delete</string>
 </resources>
