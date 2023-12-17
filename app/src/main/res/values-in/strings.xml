@@ -11,4 +11,9 @@
     <string name="change_name">Ubah nama</string>
     <string name="info">Info</string>
     <string name="delete">Hapus</string>
+    <string name="share_to">Bagikan ke</string>
+    <string name="video_deleted">Video dihapus</string>
+    <string name="cancel">Batalkan</string>
+    <string name="delete_video">Hapus video</string>
+    <string name="delete_video_msg">Apakah kamu yakin ingin menghapus video ini?</string>
 </resources>

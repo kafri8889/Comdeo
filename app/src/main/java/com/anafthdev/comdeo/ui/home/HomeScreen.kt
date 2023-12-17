@@ -1,6 +1,10 @@
 package com.anafthdev.comdeo.ui.home
 
+import android.app.Activity
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -14,8 +18,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -33,9 +41,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.Destination
@@ -43,10 +53,14 @@ import com.anafthdev.comdeo.data.Destinations
 import com.anafthdev.comdeo.data.SortVideoBy
 import com.anafthdev.comdeo.data.model.Video
 import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
+import com.anafthdev.comdeo.foundation.extension.toast
 import com.anafthdev.comdeo.foundation.uicomponent.CircleCheckbox
 import com.anafthdev.comdeo.foundation.uicomponent.ComdeoDropdownMenu
 import com.anafthdev.comdeo.foundation.uicomponent.ComdeoDropdownMenuItem
 import com.anafthdev.comdeo.foundation.uicomponent.VideoList
+import com.anafthdev.comdeo.util.FileUtils
+import com.anafthdev.comdeo.util.VideoUtil
+import timber.log.Timber
 
 /**
  * First -> label
@@ -64,17 +78,77 @@ private val bottomBarIcons: List<Triple<String, Int, Boolean>>
 		Triple(stringResource(R.string.delete), R.drawable.ic_trash, true),
 	)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
 	viewModel: HomeViewModel,
 	navigateTo: (Destination) -> Unit
 ) {
 
+	val context = LocalContext.current
+
 	val state by viewModel.state.collectAsStateWithLifecycle()
+
+	val deleteLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.StartIntentSenderForResult(),
+		onResult = { activityResult ->
+			if (activityResult.resultCode == Activity.RESULT_OK) {
+				Timber.i("Videos deleted")
+				context.toast(context.getString(R.string.video_deleted))
+				viewModel.onAction(HomeAction.DeleteVideos(state.selectedVideos))
+			}
+		}
+	)
 
 	BackHandler(state.showVideoCheckbox) {
 		viewModel.onAction(HomeAction.ShowVideoCheckbox(false))
+	}
+
+	AnimatedVisibility(visible = state.showConfirmationDialog) {
+		AlertDialog(
+			onDismissRequest = {
+				viewModel.onAction(HomeAction.ShowConfirmationDialog(false))
+			},
+			icon = {
+				Icon(
+					painter = painterResource(id = R.drawable.ic_trash),
+					contentDescription = null
+				)
+			},
+			title = {
+				Text(stringResource(id = R.string.delete_video))
+			},
+			text = {
+				Text(stringResource(id = R.string.delete_video_msg))
+			},
+			confirmButton = {
+				Button(
+					onClick = {
+						VideoUtil.deleteMultipleVideo(
+							context = context,
+							videos = state.selectedVideos,
+							onDeleted = {
+								Timber.i("Videos deleted")
+								context.toast(context.getString(R.string.video_deleted))
+								viewModel.onAction(HomeAction.DeleteVideos(state.selectedVideos))
+							}
+						)
+
+						viewModel.onAction(HomeAction.ShowConfirmationDialog(false))
+					}
+				) {
+					Text(stringResource(id = R.string.delete))
+				}
+			},
+			dismissButton = {
+				TextButton(
+					onClick = {
+						viewModel.onAction(HomeAction.ShowConfirmationDialog(false))
+					}
+				) {
+					Text(stringResource(id = R.string.cancel))
+				}
+			}
+		)
 	}
 
 	BaseScreenWrapper(
@@ -114,17 +188,29 @@ fun HomeScreen(
 
 					},
 					onDeleteClicked = {
-
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+							deleteLauncher.launch(
+								VideoUtil.deleteMultipleVideo(
+									context = context,
+									videos = state.selectedVideos
+								)
+							)
+						} else viewModel.onAction(HomeAction.ShowConfirmationDialog(true))
 					},
 					onShareClicked = {
-
+						FileUtils.shareMultipleFiles(
+							context,
+							state.selectedVideos.map { it.path.toUri() }
+						)
 					},
 					onInfoClicked = {
 
 					}
 				)
 			}
-		}
+		},
+		modifier = Modifier
+			.navigationBarsPadding()
 	) { scaffoldPadding ->
 		HomeScreenContent(
 			state = state,

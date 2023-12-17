@@ -34,8 +34,8 @@ class HomeViewModel @Inject constructor(
 				videoRepository.getAll().map {
 					when (sortBy) {
 						SortVideoBy.Name -> it.sortedBy { it.displayName }
-						SortVideoBy.DateAdded -> it.sortedBy { it.dateAdded }
-						SortVideoBy.Duration -> it.sortedBy { it.duration }
+						SortVideoBy.DateAdded -> it.sortedByDescending { it.dateAdded }
+						SortVideoBy.Duration -> it.sortedByDescending { it.duration }
 					}
 				}
 			}.collectLatest { videos ->
@@ -53,7 +53,6 @@ class HomeViewModel @Inject constructor(
 			is HomeAction.SortVideoBy -> viewModelScope.launch {
 				_sortVideoBy.update { action.sortVideoBy }
 			}
-
 			is HomeAction.UpdateSelectedVideo -> viewModelScope.launch {
 				updateState {
 					copy(
@@ -64,7 +63,13 @@ class HomeViewModel @Inject constructor(
 					)
 				}
 			}
-
+			is HomeAction.ShowConfirmationDialog -> viewModelScope.launch {
+				updateState {
+					copy(
+						showConfirmationDialog = action.show
+					)
+				}
+			}
 			is HomeAction.ShowVideoCheckbox -> viewModelScope.launch {
 				updateState {
 					copy(
@@ -74,13 +79,17 @@ class HomeViewModel @Inject constructor(
 					)
 				}
 			}
-
 			is HomeAction.SelectAllVideo -> viewModelScope.launch {
 				updateState {
 					copy(
 						selectedVideos = if (action.select) ArrayList(videos) else emptyList()
 					)
 				}
+			}
+			is HomeAction.DeleteVideos -> viewModelScope.launch {
+				videoRepository.delete(action.videos)
+
+				onAction(HomeAction.ShowVideoCheckbox(false))
 			}
 		}
 	}

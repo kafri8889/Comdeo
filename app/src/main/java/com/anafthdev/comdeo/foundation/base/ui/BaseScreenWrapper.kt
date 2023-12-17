@@ -61,7 +61,7 @@ fun <STATE: Parcelable, ACTION> BaseScreenWrapper(
 				}
 
 				is UiEvent.ShowToast -> {
-					event.message.parse(context).toast(context, event.length)
+					context.toast(event.message.parse(context), event.length)
 				}
 			}
 		}
