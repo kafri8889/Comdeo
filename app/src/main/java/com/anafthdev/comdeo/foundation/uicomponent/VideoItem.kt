@@ -36,6 +36,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.model.Video
+import com.anafthdev.comdeo.foundation.common.prependZero
 import com.anafthdev.comdeo.util.DateUtil
 import com.anafthdev.comdeo.util.VideoUtil
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -75,6 +76,7 @@ fun VideoItem(
 			VideoInfo(
 				displayName = video.displayName,
 				dateAdded = video.dateAdded,
+				duration = video.duration ?: 0L,
 				modifier = Modifier
 					.align(Alignment.Top)
 					.weight(1f)
@@ -158,6 +160,7 @@ private fun VideoThumbnail(
 private fun VideoInfo(
 	displayName: String,
 	dateAdded: Long,
+	duration: Long,
 	modifier: Modifier = Modifier
 ) {
 
@@ -170,6 +173,22 @@ private fun VideoInfo(
 			maxLines = 1,
 			overflow = TextOverflow.Ellipsis,
 			style = MaterialTheme.typography.titleMedium
+		)
+
+		Text(
+			text = buildString {
+				val seconds = (duration / 1000) % 60
+				val minutes = (duration / (60 * 1000)) % 60
+				val hours = (duration / (60 * 60 * 1000)) % 24
+				val days = duration / (24 * 60 * 60 * 1000)
+
+				val time = "${prependZero(hours)}:${prependZero(minutes)}:${prependZero(seconds)}"
+
+				append(if (days > 0) "${prependZero(days)}:$time" else time)
+			},
+			style = MaterialTheme.typography.labelMedium.copy(
+				fontWeight = FontWeight.Light
+			)
 		)
 
 		Text(
