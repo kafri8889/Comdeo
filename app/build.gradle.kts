@@ -110,6 +110,7 @@ dependencies {
 	val lifecycle_version = "2.6.2"
 	val accompanist_version = "0.32.0"
 
+	implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")

@@ -1,5 +1,6 @@
 package com.anafthdev.comdeo.foundation.uicomponent
 
+import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
@@ -39,6 +40,7 @@ import com.anafthdev.comdeo.data.model.Video
 import com.anafthdev.comdeo.foundation.common.prependZero
 import com.anafthdev.comdeo.util.DateUtil
 import com.anafthdev.comdeo.util.VideoUtil
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -49,6 +51,7 @@ fun VideoItem(
 	modifier: Modifier = Modifier,
 	isCheckboxVisible: Boolean = false,
 	checked: Boolean = false,
+	preloadRequest: RequestBuilder<Drawable>? = null,
 	onLongClick: () -> Unit,
 	onClick: () -> Unit
 ) {
@@ -70,6 +73,7 @@ fun VideoItem(
 		) {
 			VideoThumbnail(
 				video = video,
+				preloadRequest = preloadRequest,
 				maxWidth = this@BoxWithConstraints.maxWidth
 			)
 
@@ -103,6 +107,7 @@ fun VideoItem(
 private fun VideoThumbnail(
 	video: Video,
 	maxWidth: Dp,
+	preloadRequest: RequestBuilder<Drawable>?,
 	modifier: Modifier = Modifier
 ) {
 	val resolution = remember(video) {
@@ -152,7 +157,10 @@ private fun VideoThumbnail(
 			modifier = Modifier
 				.matchParentSize()
 				.zIndex(2f)
-		)
+		) { primaryRequest ->
+			if (preloadRequest != null) primaryRequest.thumbnail(preloadRequest)
+			else primaryRequest
+		}
 	}
 }
 

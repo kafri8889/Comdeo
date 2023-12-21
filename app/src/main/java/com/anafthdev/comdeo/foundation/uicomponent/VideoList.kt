@@ -27,7 +27,8 @@ fun VideoList(
 	val preloadingData = rememberGlidePreloadingData(
 		dataSize = videos.size,
 		dataGetter = { i -> videos[i] },
-		preloadImageSize = Size(512f, 512f)
+		preloadImageSize = Size(512f, 512f),
+		numberOfItemsToPreload = 20
 	) { video, requestBuilder ->
 		requestBuilder.load(video.path.toUri())
 	}
@@ -38,12 +39,13 @@ fun VideoList(
 		modifier = modifier
 	) {
 		items(preloadingData.size) { index ->
-			val (video, _) = preloadingData[index]
+			val (video, preloadRequest) = preloadingData[index]
 
 			VideoItem(
 				video = video,
 				isCheckboxVisible = showCheckbox,
 				checked = video in selectedVideos,
+				preloadRequest = preloadRequest,
 				onClick = {
 					onClick(video)
 				},
