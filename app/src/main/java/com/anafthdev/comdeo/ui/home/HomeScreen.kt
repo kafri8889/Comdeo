@@ -49,6 +49,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.Destination
+import com.anafthdev.comdeo.data.DestinationArgument
 import com.anafthdev.comdeo.data.Destinations
 import com.anafthdev.comdeo.data.SortVideoBy
 import com.anafthdev.comdeo.data.model.Video
@@ -183,9 +184,14 @@ fun HomeScreen(
 				),
 			) {
 				BottomBar(
+					isSelectedVideosEmpty = state.selectedVideos.isEmpty(),
 					multipleSelection = state.selectedVideos.size > 1,
 					onEditVideoNameClicked = {
-
+						navigateTo(
+							Destinations.changeVideoName.createRoute(
+								DestinationArgument.ARG_VIDEO_ID to state.selectedVideos[0].id
+							)
+						)
 					},
 					onDeleteClicked = {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -310,6 +316,7 @@ private fun TopBar(
 @Composable
 private fun BottomBar(
 	multipleSelection: Boolean,
+	isSelectedVideosEmpty: Boolean,
 	modifier: Modifier = Modifier,
 	onEditVideoNameClicked: () -> Unit,
 	onDeleteClicked: () -> Unit,
@@ -332,7 +339,7 @@ private fun BottomBar(
 				.then(modifier)
 		) {
 			for ((i, item) in bottomBarIcons.withIndex()) {
-				val enabled = !multipleSelection or item.third
+				val enabled = (!multipleSelection or item.third) and !isSelectedVideosEmpty
 
 				Column(
 					horizontalAlignment = Alignment.CenterHorizontally,

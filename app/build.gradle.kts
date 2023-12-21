@@ -108,6 +108,7 @@ dependencies {
 
 	val compose_version = "1.5.4"
 	val lifecycle_version = "2.6.2"
+	val accompanist_version = "0.32.0"
 
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
@@ -116,10 +117,10 @@ dependencies {
 
 	implementation("androidx.core:core-ktx:1.12.0")
 	implementation("androidx.appcompat:appcompat:1.6.1")
-	implementation("androidx.activity:activity-compose:1.8.1")
+	implementation("androidx.activity:activity-compose:1.8.2")
 	implementation("androidx.compose.runtime:runtime:1.5.4")
 	implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
-	implementation("androidx.navigation:navigation-compose:2.7.5")
+	implementation("androidx.navigation:navigation-compose:2.7.6")
 	implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 	implementation("androidx.core:core-splashscreen:1.0.1")
 
@@ -141,10 +142,10 @@ dependencies {
 	implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
 
 	// Material Design
-	implementation("com.google.android.material:material:1.10.0")
+	implementation("com.google.android.material:material:1.11.0")
 	implementation("androidx.compose.material:material:$compose_version")
 	implementation("androidx.compose.material:material-icons-extended:$compose_version")
-	implementation("androidx.compose.material3:material3-android:1.2.0-alpha12")
+	implementation("androidx.compose.material3:material3-android:1.2.0-beta01")
 	implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 
 	// Large screen support
@@ -179,13 +180,22 @@ dependencies {
 	implementation("androidx.room:room-ktx:2.6.1")
 	ksp("androidx.room:room-compiler:2.6.1")
 
+	// Work Manager
+	implementation("androidx.hilt:hilt-work:1.1.0")
+	implementation("androidx.work:work-runtime-ktx:2.9.0")
+
 	// Media
 	implementation("androidx.media3:media3-exoplayer:1.2.0")
+
+	// Accompanist
+	implementation("com.google.accompanist:accompanist-navigation-material:$accompanist_version")
 
 	// Other
 	implementation("com.google.code.gson:gson:2.10")
 	implementation("com.jakewharton.timber:timber:5.0.1")
 	implementation("com.squareup.wire:wire-runtime:4.4.3")
 	implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
+
+	debugImplementation("androidx.compose.ui:ui-tooling:1.5.4")
 
 }

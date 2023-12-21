@@ -74,7 +74,7 @@ fun VideoItem(
 			)
 
 			VideoInfo(
-				displayName = video.displayName,
+				displayName = video.displayName.substringBeforeLast("."),
 				dateAdded = video.dateAdded,
 				duration = video.duration ?: 0L,
 				modifier = Modifier

@@ -18,6 +18,9 @@ abstract class VideoDao {
 	@Query("delete from video")
 	abstract fun deleteAll()
 
+	@Query("select * from video where id_video like :id")
+	abstract fun getById(id: Long): Flow<Video?>
+
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	abstract suspend fun insert(vararg video: Video)
 

@@ -7,11 +7,14 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.contentColorFor
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.view.WindowCompat
 import com.anafthdev.comdeo.foundation.theme.ComdeoTheme
 import com.anafthdev.comdeo.ui.app.Comdeo
 import com.anafthdev.comdeo.ui.app.ComdeoViewModel
-import com.anafthdev.comdeo.util.VideoUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,13 +34,17 @@ class MainActivity: ComponentActivity() {
 
 		setContent {
 			ComdeoTheme {
-				Comdeo(viewModel)
+				CompositionLocalProvider(
+					LocalContentColor provides MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.background)
+				) {
+					Comdeo(viewModel)
+				}
 			}
 		}
 	}
 
 	override fun onStart() {
 		super.onStart()
-		viewModel.insertVideo(VideoUtil.findAllVideo(this))
+		viewModel.scanVideo()
 	}
 }

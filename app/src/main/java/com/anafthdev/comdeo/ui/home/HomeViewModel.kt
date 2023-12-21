@@ -2,13 +2,17 @@ package com.anafthdev.comdeo.ui.home
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.anafthdev.comdeo.data.SortVideoBy
 import com.anafthdev.comdeo.data.repository.VideoRepository
 import com.anafthdev.comdeo.foundation.base.ui.BaseViewModel
+import com.anafthdev.comdeo.foundation.common.VideoManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -19,6 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
 	private val videoRepository: VideoRepository,
+	private val videoManager: VideoManager,
+	private val workManager: WorkManager,
 	savedStateHandle: SavedStateHandle
 ): BaseViewModel<HomeState, HomeAction>(
 	savedStateHandle = savedStateHandle,
@@ -43,6 +49,23 @@ class HomeViewModel @Inject constructor(
 					copy(
 						videos = videos
 					)
+				}
+			}
+		}
+
+		// when user renamed the video and success, disable multiple selection mode
+		viewModelScope.launch {
+			videoManager.currentScanWorkId.filterNotNull().flatMapLatest { uuid ->
+				workManager.getWorkInfoByIdFlow(uuid)
+			}.collectLatest { workInfo ->
+				when (workInfo.state) {
+					WorkInfo.State.SUCCEEDED -> updateState {
+						copy(
+							showVideoCheckbox = false,
+							selectedVideos = emptyList()
+						)
+					}
+					else -> {}
 				}
 			}
 		}

@@ -13,6 +13,8 @@ class VideoRepository @Inject constructor(
 
 	fun deleteAll() = videoDao.deleteAll()
 
+	fun getById(id: Long): Flow<Video?> = videoDao.getById(id)
+
 	suspend fun insert(vararg video: Video) = videoDao.insert(*video)
 	suspend fun update(vararg video: Video) = videoDao.update(*video)
 	suspend fun delete(vararg video: Video) = videoDao.delete(*video)

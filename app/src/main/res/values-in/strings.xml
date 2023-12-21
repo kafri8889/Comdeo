@@ -16,4 +16,6 @@
     <string name="cancel">Batalkan</string>
     <string name="delete_video">Hapus video</string>
     <string name="delete_video_msg">Apakah kamu yakin ingin menghapus video ini?</string>
+    <string name="save">Simpan</string>
+    <string name="write_video_name">Tulis nama video</string>
 </resources>
