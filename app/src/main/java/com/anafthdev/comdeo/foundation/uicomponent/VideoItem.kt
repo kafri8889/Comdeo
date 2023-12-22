@@ -37,7 +37,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.model.Video
-import com.anafthdev.comdeo.foundation.common.prependZero
+import com.anafthdev.comdeo.foundation.extension.formattedDuration
 import com.anafthdev.comdeo.util.DateUtil
 import com.anafthdev.comdeo.util.VideoUtil
 import com.bumptech.glide.RequestBuilder
@@ -80,7 +80,7 @@ fun VideoItem(
 			VideoInfo(
 				displayName = video.displayName.substringBeforeLast("."),
 				dateAdded = video.dateAdded,
-				duration = video.duration ?: 0L,
+				duration = video.formattedDuration(),
 				modifier = Modifier
 					.align(Alignment.Top)
 					.weight(1f)
@@ -168,7 +168,7 @@ private fun VideoThumbnail(
 private fun VideoInfo(
 	displayName: String,
 	dateAdded: Long,
-	duration: Long,
+	duration: String,
 	modifier: Modifier = Modifier
 ) {
 
@@ -184,16 +184,7 @@ private fun VideoInfo(
 		)
 
 		Text(
-			text = buildString {
-				val seconds = (duration / 1000) % 60
-				val minutes = (duration / (60 * 1000)) % 60
-				val hours = (duration / (60 * 60 * 1000)) % 24
-				val days = duration / (24 * 60 * 60 * 1000)
-
-				val time = "${prependZero(hours)}:${prependZero(minutes)}:${prependZero(seconds)}"
-
-				append(if (days > 0) "${prependZero(days)}:$time" else time)
-			},
+			text = duration,
 			style = MaterialTheme.typography.labelMedium.copy(
 				fontWeight = FontWeight.Light
 			)

@@ -18,4 +18,13 @@
     <string name="delete_video_msg">Apakah kamu yakin ingin menghapus video ini?</string>
     <string name="save">Simpan</string>
     <string name="write_video_name">Tulis nama video</string>
+    <string name="rename_video">Ganti nama video</string>
+    <string name="detail">Rincian</string>
+    <string name="name">Nama</string>
+    <string name="format">Format</string>
+    <string name="size">Ukuran</string>
+    <string name="resolution">Resolusi</string>
+    <string name="duration">Durasi</string>
+    <string name="path">Path</string>
+    <string name="pixels">Piksel</string>
 </resources>

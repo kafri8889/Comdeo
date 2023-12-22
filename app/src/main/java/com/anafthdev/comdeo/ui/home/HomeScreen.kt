@@ -210,7 +210,11 @@ fun HomeScreen(
 						)
 					},
 					onInfoClicked = {
-
+						navigateTo(
+							Destinations.videoInfo.createRoute(
+								DestinationArgument.ARG_VIDEO_ID to state.selectedVideos[0].id
+							)
+						)
 					}
 				)
 			}

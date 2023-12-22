@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -168,14 +166,20 @@ private fun ChangeVideoNameScreenContent(
 
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
-		modifier = modifier
+		verticalArrangement = Arrangement.spacedBy(16.dp),
+		modifier = Modifier
+			.padding(bottom = 16.dp)
+			.then(modifier)
 	) {
 		DragHandle(
 			modifier = Modifier
 				.fillMaxWidth(0.16f)
 		)
 
-		Spacer(modifier = Modifier.height(16.dp))
+		Text(
+			text = stringResource(id = R.string.rename_video),
+			style = MaterialTheme.typography.titleMedium
+		)
 
 		BasicTextField(
 			value = textFieldValue,
@@ -247,8 +251,6 @@ private fun ChangeVideoNameScreenContent(
 				.fillMaxWidth()
 				.focusRequester(textFieldFocusRequester)
 		)
-
-		Spacer(modifier = Modifier.height(8.dp))
 
 		Button(
 			onClick = onSave,
