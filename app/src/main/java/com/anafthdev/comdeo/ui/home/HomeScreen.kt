@@ -369,7 +369,8 @@ private fun BottomBar(
 					) {
 						Icon(
 							painter = painterResource(id = item.second),
-							contentDescription = null
+							contentDescription = null,
+							tint = LocalContentColor.current
 						)
 
 						Spacer(modifier = Modifier.height(4.dp))
