@@ -228,7 +228,11 @@ fun HomeScreen(
 				if (state.showVideoCheckbox) {
 					viewModel.onAction(HomeAction.UpdateSelectedVideo(video))
 				} else {
-
+					navigateTo(
+						Destinations.video.createRoute(
+							DestinationArgument.ARG_VIDEO_ID to video.id
+						)
+					)
 				}
 			},
 			onLongClick = { video ->

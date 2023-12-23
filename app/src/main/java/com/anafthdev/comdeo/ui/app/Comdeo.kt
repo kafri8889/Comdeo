@@ -17,6 +17,7 @@ import com.anafthdev.comdeo.data.Destinations
 import com.anafthdev.comdeo.ui.change_video_name.ChangeVideoNameScreen
 import com.anafthdev.comdeo.ui.home.HomeScreen
 import com.anafthdev.comdeo.ui.search.SearchScreen
+import com.anafthdev.comdeo.ui.video.VideoScreen
 import com.anafthdev.comdeo.ui.video_info.VideoInfoScreen
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
@@ -86,6 +87,16 @@ fun Comdeo(
 
 			composable(Destinations.search.route) { backEntry ->
 				SearchScreen(
+					viewModel = hiltViewModel(backEntry),
+					navigateUp = navController::popBackStack
+				)
+			}
+
+			composable(
+				route = Destinations.video.route,
+				arguments = Destinations.video.arguments
+			) { backEntry ->
+				VideoScreen(
 					viewModel = hiltViewModel(backEntry),
 					navigateUp = navController::popBackStack
 				)

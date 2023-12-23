@@ -11,6 +11,7 @@ object DestinationRoute {
 	const val CHANGE_VIDEO_NAME = "change_video_name"
 	const val VIDEO_INFO = "video_info"
 	const val SEARCH = "search"
+	const val VIDEO = "video"
 	const val HOME = "home"
 }
 
@@ -84,6 +85,20 @@ object Destinations {
 
 	val search = Destination(
 		route = DestinationRoute.SEARCH
+	)
+
+	/**
+	 * Required arguments:
+	 * - [DestinationArgument.ARG_VIDEO_ID]
+	 */
+	val video = Destination(
+		route = Destination.buildRoute(DestinationRoute.VIDEO, DestinationArgument.ARG_VIDEO_ID),
+		arguments = listOf(
+			navArgument(DestinationArgument.ARG_VIDEO_ID) {
+				type = NavType.LongType
+				defaultValue = -1
+			}
+		)
 	)
 
 	/**
