@@ -27,7 +27,7 @@ fun VideoList(
 	val preloadingData = rememberGlidePreloadingData(
 		dataSize = videos.size,
 		dataGetter = { i -> videos[i] },
-		preloadImageSize = Size(512f, 512f),
+		preloadImageSize = Size(128f, 128f),
 		numberOfItemsToPreload = 20
 	) { video, requestBuilder ->
 		requestBuilder.load(video.path.toUri())
@@ -38,7 +38,10 @@ fun VideoList(
 		verticalArrangement = Arrangement.spacedBy(8.dp),
 		modifier = modifier
 	) {
-		items(preloadingData.size) { index ->
+		items(
+			count = preloadingData.size,
+			key = { index -> videos[index].id }
+		) { index ->
 			val (video, preloadRequest) = preloadingData[index]
 
 			VideoItem(

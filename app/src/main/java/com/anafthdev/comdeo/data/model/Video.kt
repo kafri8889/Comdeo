@@ -2,6 +2,7 @@ package com.anafthdev.comdeo.data.model
 
 import android.os.Parcelable
 import android.provider.MediaStore
+import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -16,6 +17,7 @@ import kotlinx.parcelize.Parcelize
  * @property size size in bytes [MediaStore.Video.Media.SIZE]
  */
 @Parcelize
+@Immutable
 @Entity(tableName = "video")
 data class Video(
 	@PrimaryKey

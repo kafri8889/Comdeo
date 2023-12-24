@@ -43,6 +43,9 @@ import com.anafthdev.comdeo.util.VideoUtil
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -160,6 +163,12 @@ private fun VideoThumbnail(
 		) { primaryRequest ->
 			if (preloadRequest != null) primaryRequest.thumbnail(preloadRequest)
 			else primaryRequest
+				.apply(
+					RequestOptions()
+						.diskCacheStrategy(DiskCacheStrategy.ALL)
+						.override(256)
+						.format(DecodeFormat.PREFER_RGB_565)
+				)
 		}
 	}
 }
