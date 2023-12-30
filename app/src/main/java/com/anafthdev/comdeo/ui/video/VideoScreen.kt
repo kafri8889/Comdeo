@@ -11,9 +11,11 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,23 +31,30 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
 import com.anafthdev.comdeo.foundation.common.SystemBarsVisibility
 import com.anafthdev.comdeo.foundation.common.formatDuration
 import com.anafthdev.comdeo.foundation.common.installSystemBarsController
 import com.anafthdev.comdeo.foundation.common.rememberSystemBarsControllerState
+import com.anafthdev.comdeo.foundation.uicomponent.ObserveLifecycle
+import com.anafthdev.comdeo.foundation.uicomponent.VideoPlayer
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -54,6 +63,8 @@ fun VideoScreen(
 	navigateUp: () -> Unit
 ) {
 
+	val context = LocalContext.current
+
 	val state by viewModel.state.collectAsStateWithLifecycle()
 
 	val systemBarsControllerState = rememberSystemBarsControllerState(
@@ -61,7 +72,29 @@ fun VideoScreen(
 		initialStatusBarVisibility = SystemBarsVisibility.Gone
 	)
 
+	val exoPlayer = remember {
+		ExoPlayer.Builder(context)
+			.setWakeMode(C.WAKE_MODE_LOCAL)
+			.build()
+	}
+
 	installSystemBarsController(systemBarsControllerState)
+
+	LaunchedEffect(state.video) {
+		if (state.video != null) {
+			exoPlayer.apply {
+				setMediaItem(MediaItem.fromUri(state.video!!.path))
+				prepare()
+				play()
+			}
+		}
+	}
+
+	ObserveLifecycle(
+		onPause = exoPlayer::pause,
+		onResume = exoPlayer::play,
+		onDestroy = exoPlayer::release
+	)
 
 	BaseScreenWrapper(
 		viewModel = viewModel,
@@ -113,6 +146,14 @@ fun VideoScreen(
 	) { scaffoldPadding ->
 		VideoScreenContent(
 			state = state,
+			videoPlayer = {
+				VideoPlayer(
+					player = exoPlayer,
+					modifier = Modifier
+						.fillMaxWidth()
+						.aspectRatio(1f / 1f)
+				)
+			},
 			modifier = Modifier
 				.background(MaterialTheme.colorScheme.background)
 				.padding(scaffoldPadding)
@@ -125,13 +166,16 @@ fun VideoScreen(
 @Composable
 private fun VideoScreenContent(
 	state: VideoState,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	videoPlayer: @Composable ColumnScope.() -> Unit
 ) {
 
 	Column(
+		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
 		modifier = modifier
 	) {
-
+		videoPlayer()
 	}
 }
 

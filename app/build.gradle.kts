@@ -195,6 +195,7 @@ dependencies {
 
 	// Media
 	implementation("androidx.media3:media3-exoplayer:1.2.0")
+	implementation("androidx.media3:media3-ui:1.2.0")
 
 	// Accompanist
 	implementation("com.google.accompanist:accompanist-navigation-material:$accompanist_version")
