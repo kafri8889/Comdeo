@@ -9,6 +9,9 @@ import com.anafthdev.comdeo.data.repository.VideoRepository
 import com.anafthdev.comdeo.foundation.base.ui.BaseViewModel
 import com.anafthdev.comdeo.foundation.common.VideoManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -47,7 +50,7 @@ class HomeViewModel @Inject constructor(
 			}.collectLatest { videos ->
 				updateState {
 					copy(
-						videos = videos
+						videos = videos.toImmutableList()
 					)
 				}
 			}
@@ -62,7 +65,7 @@ class HomeViewModel @Inject constructor(
 					WorkInfo.State.SUCCEEDED -> updateState {
 						copy(
 							showVideoCheckbox = false,
-							selectedVideos = emptyList()
+							selectedVideos = persistentListOf()
 						)
 					}
 					else -> {}
@@ -79,9 +82,9 @@ class HomeViewModel @Inject constructor(
 			is HomeAction.UpdateSelectedVideo -> viewModelScope.launch {
 				updateState {
 					copy(
-						selectedVideos = selectedVideos.toMutableList().apply {
-							if (action.video in this) remove(action.video)
-							else add(action.video)
+						selectedVideos = selectedVideos.toPersistentList().let {
+							if (action.video in it) it.remove(action.video)
+							else it.add(action.video)
 						}
 					)
 				}
@@ -98,14 +101,14 @@ class HomeViewModel @Inject constructor(
 					copy(
 						showVideoCheckbox = action.show,
 						// Remove selected video when showVideoCheckbox is false
-						selectedVideos = if (!action.show) emptyList() else selectedVideos
+						selectedVideos = if (!action.show) persistentListOf() else selectedVideos
 					)
 				}
 			}
 			is HomeAction.SelectAllVideo -> viewModelScope.launch {
 				updateState {
 					copy(
-						selectedVideos = if (action.select) ArrayList(videos) else emptyList()
+						selectedVideos = if (action.select) videos else persistentListOf()
 					)
 				}
 			}

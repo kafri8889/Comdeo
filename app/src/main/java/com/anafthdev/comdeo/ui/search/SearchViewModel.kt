@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.anafthdev.comdeo.data.repository.VideoRepository
 import com.anafthdev.comdeo.foundation.base.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ class SearchViewModel @Inject constructor(
 					copy(
 						result = videos.filter {
 							it.displayName.contains(searchState.query, true)
-						}
+						}.toImmutableList()
 					)
 				}
 			}

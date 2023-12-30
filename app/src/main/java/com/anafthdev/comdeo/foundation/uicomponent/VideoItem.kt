@@ -54,7 +54,7 @@ fun VideoItem(
 	modifier: Modifier = Modifier,
 	isCheckboxVisible: Boolean = false,
 	checked: Boolean = false,
-	preloadRequest: RequestBuilder<Drawable>? = null,
+	preloadRequest: (() -> RequestBuilder<Drawable>?)? = null,
 	onLongClick: () -> Unit,
 	onClick: () -> Unit
 ) {
@@ -110,7 +110,7 @@ fun VideoItem(
 private fun VideoThumbnail(
 	video: Video,
 	maxWidth: Dp,
-	preloadRequest: RequestBuilder<Drawable>?,
+	preloadRequest: (() -> RequestBuilder<Drawable>?)?,
 	modifier: Modifier = Modifier
 ) {
 	val resolution = remember(video) {
@@ -161,7 +161,7 @@ private fun VideoThumbnail(
 				.matchParentSize()
 				.zIndex(2f)
 		) { primaryRequest ->
-			if (preloadRequest != null) primaryRequest.thumbnail(preloadRequest)
+			if (preloadRequest != null) primaryRequest.thumbnail(preloadRequest())
 			else primaryRequest
 				.apply(
 					RequestOptions()

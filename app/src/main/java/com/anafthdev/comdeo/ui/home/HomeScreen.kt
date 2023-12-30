@@ -61,6 +61,7 @@ import com.anafthdev.comdeo.foundation.uicomponent.ComdeoDropdownMenuItem
 import com.anafthdev.comdeo.foundation.uicomponent.VideoList
 import com.anafthdev.comdeo.util.FileUtils
 import com.anafthdev.comdeo.util.VideoUtil
+import kotlinx.collections.immutable.ImmutableList
 import timber.log.Timber
 
 /**
@@ -268,8 +269,8 @@ private fun HomeScreenContent(
 @Composable
 private fun TopBar(
 	showVideoCheckbox: Boolean,
-	selectedVideos: List<Video>,
-	videos: List<Video>,
+	selectedVideos: ImmutableList<Video>,
+	videos: ImmutableList<Video>,
 	modifier: Modifier = Modifier,
 	onNavigationIconClicked: () -> Unit,
 	onCheckAllVideo: (checkAll: Boolean) -> Unit,

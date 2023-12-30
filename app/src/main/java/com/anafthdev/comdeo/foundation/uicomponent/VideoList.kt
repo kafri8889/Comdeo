@@ -10,15 +10,17 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.anafthdev.comdeo.data.model.Video
 import com.bumptech.glide.integration.compose.rememberGlidePreloadingData
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
  * Component for displaying video list
  */
 @Composable
 fun VideoList(
-	videos: List<Video>,
+	videos: ImmutableList<Video>,
 	modifier: Modifier = Modifier,
-	selectedVideos: List<Video> = emptyList(),
+	selectedVideos: ImmutableList<Video> = persistentListOf(),
 	showCheckbox: Boolean = false,
 	onLongClick: (Video) -> Unit,
 	onClick: (Video) -> Unit
@@ -48,7 +50,7 @@ fun VideoList(
 				video = video,
 				isCheckboxVisible = showCheckbox,
 				checked = video in selectedVideos,
-				preloadRequest = preloadRequest,
+				preloadRequest = { preloadRequest },
 				onClick = {
 					onClick(video)
 				},
