@@ -8,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.model.Video
-import com.anafthdev.comdeo.foundation.common.prependZero
+import com.anafthdev.comdeo.foundation.common.formatDuration
 import com.anafthdev.comdeo.util.UriUtil
 
 val Video.fileExtension: String
@@ -21,16 +21,7 @@ fun Video.formattedResolution(): String {
 
 @Composable
 fun Video.formattedDuration(): String {
-	return if (duration == null) "00:00" else buildString {
-		val seconds = (duration / 1000) % 60
-		val minutes = (duration / (60 * 1000)) % 60
-		val hours = (duration / (60 * 60 * 1000)) % 24
-		val days = duration / (24 * 60 * 60 * 1000)
-
-		val time = "${prependZero(hours)}:${prependZero(minutes)}:${prependZero(seconds)}"
-
-		append(if (days > 0) "${prependZero(days)}:$time" else time)
-	}
+	return if (duration == null) "00:00" else formatDuration(duration)
 }
 
 @Composable

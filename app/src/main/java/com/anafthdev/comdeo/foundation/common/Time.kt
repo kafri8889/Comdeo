@@ -56,3 +56,22 @@ fun convert12HourTo24Hour(
 fun isHourAm(hour: Int): Boolean {
 	return hour < 12
 }
+
+/**
+ * Format [timeInMillis] to duration like "02:23:59"
+ */
+fun formatDuration(timeInMillis: Long): String {
+	return buildString {
+		val seconds = (timeInMillis / 1000) % 60
+		val minutes = (timeInMillis / (60 * 1000)) % 60
+		val hours = (timeInMillis / (60 * 60 * 1000)) % 24
+		val days = timeInMillis / (24 * 60 * 60 * 1000)
+
+		var time = "${prependZero(minutes)}:${prependZero(seconds)}"
+
+		if (hours > 0) time = "${prependZero(hours)}:$time"
+		if (days > 0) time = "${prependZero(days)}:$time"
+
+		append(time)
+	}
+}
