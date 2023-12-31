@@ -1,5 +1,6 @@
 package com.anafthdev.comdeo.ui.video
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -9,19 +10,15 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,7 +30,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -46,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
@@ -55,8 +55,8 @@ import com.anafthdev.comdeo.foundation.common.installSystemBarsController
 import com.anafthdev.comdeo.foundation.common.rememberSystemBarsControllerState
 import com.anafthdev.comdeo.foundation.uicomponent.ObserveLifecycle
 import com.anafthdev.comdeo.foundation.uicomponent.VideoPlayer
+import timber.log.Timber
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun VideoScreen(
 	viewModel: VideoViewModel,
@@ -76,6 +76,18 @@ fun VideoScreen(
 		ExoPlayer.Builder(context)
 			.setWakeMode(C.WAKE_MODE_LOCAL)
 			.build()
+			.apply {
+				viewModel.setExoPlayer(this)
+
+				addListener(
+					object : Player.Listener {
+						override fun onIsPlayingChanged(isPlaying: Boolean) {
+							super.onIsPlayingChanged(isPlaying)
+							viewModel.onAction(VideoAction.SetIsPlaying(isPlaying))
+						}
+					}
+				)
+			}
 	}
 
 	installSystemBarsController(systemBarsControllerState)
@@ -88,6 +100,11 @@ fun VideoScreen(
 				play()
 			}
 		}
+	}
+
+	BackHandler {
+		systemBarsControllerState.showSystemBar()
+		navigateUp()
 	}
 
 	ObserveLifecycle(
@@ -117,13 +134,23 @@ fun VideoScreen(
 		bottomBar = {
 			BottomBar(
 				visible = systemBarsControllerState.isNavigationBarVisible,
+				isPlaying = state.isPlaying,
 				maxPosition = (state.video?.duration ?: 0L).toFloat(),
 				currentPosition = { state.currentPosition.toFloat() },
 				onSeekTo = { pos ->
+					exoPlayer.apply {
+						seekTo(pos)
+					}
+				},
+				onSliderDragged = { isPressed ->
+					Timber.i("onPositionBeingChanged: isPressed $isPressed")
 
+					if (isPressed) exoPlayer.pause()
+					else exoPlayer.play()
 				},
 				onPlayPause = {
-
+					if (exoPlayer.isPlaying) exoPlayer.pause()
+					else exoPlayer.play()
 				},
 				onPrevious = {
 
@@ -141,9 +168,7 @@ fun VideoScreen(
 					} else systemBarsControllerState.showSystemBar()
 				}
 			}
-			.windowInsetsPadding(WindowInsets.statusBarsIgnoringVisibility)
-			.systemBarsPadding()
-	) { scaffoldPadding ->
+	) { _ ->
 		VideoScreenContent(
 			state = state,
 			videoPlayer = {
@@ -156,7 +181,6 @@ fun VideoScreen(
 			},
 			modifier = Modifier
 				.background(MaterialTheme.colorScheme.background)
-				.padding(scaffoldPadding)
 				.fillMaxSize()
 		)
 	}
@@ -258,14 +282,27 @@ private fun BottomBar(
 	maxPosition: Float,
 	currentPosition: () -> Float,
 	modifier: Modifier = Modifier,
-	isPaused: Boolean = false,
-	onSeekTo: (Long) -> Unit,
+	isPlaying: Boolean = false,
+	onSliderDragged: (isDragged: Boolean) -> Unit,
+	onSeekTo: (position: Long) -> Unit,
 	onPlayPause: () -> Unit,
 	onPrevious: () -> Unit,
 	onNext: () -> Unit
 ) {
 
 	val interactionSource = remember { MutableInteractionSource() }
+
+	var sliderProgress by remember { mutableFloatStateOf(0f) }
+
+	val isSliderDragged by interactionSource.collectIsDraggedAsState()
+
+	LaunchedEffect(currentPosition()) {
+		sliderProgress = currentPosition()
+	}
+
+	LaunchedEffect(isSliderDragged) {
+		onSliderDragged(isSliderDragged)
+	}
 
 	AnimatedVisibility(
 		visible = visible,
@@ -290,12 +327,12 @@ private fun BottomBar(
 					.fillMaxWidth()
 			) {
 				Text(
-					text = formatDuration(currentPosition().toLong()),
+					text = formatDuration(sliderProgress.toLong()),
 					style = MaterialTheme.typography.labelMedium
 				)
 
 				Slider(
-					value = currentPosition(),
+					value = sliderProgress,
 					valueRange = 0f..maxPosition,
 					interactionSource = interactionSource,
 					thumb = {
@@ -307,10 +344,8 @@ private fun BottomBar(
 						)
 					},
 					onValueChange = { newValue ->
-						onSeekTo(newValue.toLong())
-					},
-					onValueChangeFinished = {
-
+						sliderProgress = newValue
+						onSeekTo(sliderProgress.toLong())
 					},
 					modifier = Modifier
 						.weight(1f)
@@ -338,7 +373,7 @@ private fun BottomBar(
 				IconButton(onClick = onPlayPause) {
 					Icon(
 						painter = painterResource(
-							id = if (isPaused) R.drawable.ic_play else R.drawable.ic_pause
+							id = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
 						),
 						contentDescription = null
 					)

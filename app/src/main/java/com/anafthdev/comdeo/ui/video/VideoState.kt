@@ -9,5 +9,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class VideoState(
 	val video: Video? = null,
+	val isPlaying: Boolean = false,
 	val currentPosition: Long = 0L,
 ): Parcelable
