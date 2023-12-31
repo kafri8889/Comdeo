@@ -4,7 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.anafthdev.comdeo.data.SortVideoBy
+import com.anafthdev.comdeo.data.VideoSortOption
+import com.anafthdev.comdeo.data.repository.UserPreferenceRepository
 import com.anafthdev.comdeo.data.repository.VideoRepository
 import com.anafthdev.comdeo.foundation.base.ui.BaseViewModel
 import com.anafthdev.comdeo.foundation.common.VideoManager
@@ -18,13 +19,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+	private val userPreferenceRepository: UserPreferenceRepository,
 	private val videoRepository: VideoRepository,
 	private val videoManager: VideoManager,
 	private val workManager: WorkManager,
@@ -34,17 +35,17 @@ class HomeViewModel @Inject constructor(
 	defaultState = HomeState()
 ) {
 
-	private val _sortVideoBy = MutableStateFlow(SortVideoBy.Name)
+	private val _videoSortOption = MutableStateFlow(VideoSortOption.Name)
 
 	init {
 		viewModelScope.launch {
 			// Get videos from repository and apply sort
-			_sortVideoBy.flatMapLatest { sortBy ->
+			_videoSortOption.flatMapLatest { sortBy ->
 				videoRepository.getAll().map {
 					when (sortBy) {
-						SortVideoBy.Name -> it.sortedBy { it.displayName }
-						SortVideoBy.DateAdded -> it.sortedByDescending { it.dateAdded }
-						SortVideoBy.Duration -> it.sortedByDescending { it.duration }
+						VideoSortOption.Name -> it.sortedBy { it.displayName }
+						VideoSortOption.DateAdded -> it.sortedByDescending { it.dateAdded }
+						VideoSortOption.Duration -> it.sortedByDescending { it.duration }
 					}
 				}
 			}.collectLatest { videos ->
@@ -72,12 +73,18 @@ class HomeViewModel @Inject constructor(
 				}
 			}
 		}
+
+		viewModelScope.launch {
+			userPreferenceRepository.getUserPreference.collectLatest { pref ->
+				_videoSortOption.emit(pref.videoSortOption)
+			}
+		}
 	}
 
 	override fun onAction(action: HomeAction) {
 		when (action) {
 			is HomeAction.SortVideoBy -> viewModelScope.launch {
-				_sortVideoBy.update { action.sortVideoBy }
+				userPreferenceRepository.setVideoSortOption(action.videoSortOption)
 			}
 			is HomeAction.UpdateSelectedVideo -> viewModelScope.launch {
 				updateState {

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.anafthdev.comdeo.R
 
-enum class SortVideoBy {
+enum class VideoSortOption {
 	Name,
 	DateAdded,
 	Duration;

@@ -51,7 +51,7 @@ import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.data.Destination
 import com.anafthdev.comdeo.data.DestinationArgument
 import com.anafthdev.comdeo.data.Destinations
-import com.anafthdev.comdeo.data.SortVideoBy
+import com.anafthdev.comdeo.data.VideoSortOption
 import com.anafthdev.comdeo.data.model.Video
 import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
 import com.anafthdev.comdeo.foundation.extension.toast
@@ -164,7 +164,7 @@ fun HomeScreen(
 				onCheckAllVideo = { checked ->
 					viewModel.onAction(HomeAction.SelectAllVideo(checked))
 				},
-				onSortVideoBy = { sortVideoBy ->
+				onVideoSortOptionChanged = { sortVideoBy ->
 					viewModel.onAction(HomeAction.SortVideoBy(sortVideoBy))
 				},
 				onNavigationIconClicked = {
@@ -275,7 +275,7 @@ private fun TopBar(
 	onNavigationIconClicked: () -> Unit,
 	onCheckAllVideo: (checkAll: Boolean) -> Unit,
 	onNavigateTo: (Destination) -> Unit,
-	onSortVideoBy: (SortVideoBy) -> Unit
+	onVideoSortOptionChanged: (VideoSortOption) -> Unit
 ) {
 	TopAppBar(
 		modifier = modifier,
@@ -303,7 +303,7 @@ private fun TopBar(
 				}
 
 				MoreIconButton(
-					onSortBy = onSortVideoBy
+					onVideoSortOptionChanged = onVideoSortOptionChanged
 				)
 			}
 		},
@@ -394,7 +394,7 @@ private fun BottomBar(
 @Composable
 private fun MoreIconButton(
 	modifier: Modifier = Modifier,
-	onSortBy: (SortVideoBy) -> Unit
+	onVideoSortOptionChanged: (VideoSortOption) -> Unit
 ) {
 	var expanded by remember { mutableStateOf(false) }
 	var isSortContent by remember { mutableStateOf(false) }
@@ -420,10 +420,10 @@ private fun MoreIconButton(
 			onDismissRequest = reset
 		) {
 			if (isSortContent) {
-				for (entry in SortVideoBy.entries) {
+				for (entry in VideoSortOption.entries) {
 					ComdeoDropdownMenuItem(
 						onClick = {
-							onSortBy(entry)
+							onVideoSortOptionChanged(entry)
 							reset()
 						},
 						title = {

@@ -1,0 +1,9 @@
+syntax = "proto3";
+package com.anafthdev.comdeo;
+option java_package = "com.anafthdev.comdeo";
+option java_generate_equals_and_hash = true;
+option java_multiple_files = true;
+
+message ProtoUserPreference {
+  int32 videoSortOption = 1;
+}
