@@ -27,6 +27,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,12 +51,14 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.anafthdev.comdeo.R
 import com.anafthdev.comdeo.foundation.base.ui.BaseScreenWrapper
 import com.anafthdev.comdeo.foundation.common.SystemBarsVisibility
+import com.anafthdev.comdeo.foundation.common.Timer
 import com.anafthdev.comdeo.foundation.common.formatDuration
 import com.anafthdev.comdeo.foundation.common.installSystemBarsController
 import com.anafthdev.comdeo.foundation.common.rememberSystemBarsControllerState
 import com.anafthdev.comdeo.foundation.uicomponent.ObserveLifecycle
 import com.anafthdev.comdeo.foundation.uicomponent.VideoPlayer
 import timber.log.Timber
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun VideoScreen(
@@ -67,9 +70,19 @@ fun VideoScreen(
 
 	val state by viewModel.state.collectAsStateWithLifecycle()
 
+	val timer = remember { Timer() }
+
 	val systemBarsControllerState = rememberSystemBarsControllerState(
 		initialNavigationBarVisibility = SystemBarsVisibility.Gone,
-		initialStatusBarVisibility = SystemBarsVisibility.Gone
+		initialStatusBarVisibility = SystemBarsVisibility.Gone,
+		onSystemBarVisibilityChanged = { visibility, controllerState ->
+			if (visibility.isVisible) {
+				timer.postDelayed(
+					duration = 3.seconds,
+					block = controllerState::hideSystemBar
+				)
+			} else timer.cancel()
+		}
 	)
 
 	val exoPlayer = remember {
@@ -90,11 +103,20 @@ fun VideoScreen(
 			}
 	}
 
+	val cancelAndRunTimer: () -> Unit = {
+		timer.cancel()
+		timer.postDelayed(
+			duration = 3.seconds,
+			block = systemBarsControllerState::hideSystemBar
+		)
+	}
+
 	installSystemBarsController(systemBarsControllerState)
 
 	LaunchedEffect(state.video) {
 		if (state.video != null) {
 			exoPlayer.apply {
+				stop()
 				setMediaItem(MediaItem.fromUri(state.video!!.path))
 				prepare()
 				play()
@@ -145,18 +167,34 @@ fun VideoScreen(
 				onSliderDragged = { isPressed ->
 					Timber.i("onPositionBeingChanged: isPressed $isPressed")
 
-					if (isPressed) exoPlayer.pause()
-					else exoPlayer.play()
+					if (isPressed) {
+						// Cancel timer and pause player when seek in progress
+						exoPlayer.pause()
+						timer.cancel()
+					} else {
+						// Start timer and play
+						cancelAndRunTimer()
+						exoPlayer.play()
+					}
 				},
 				onPlayPause = {
+					// Reset timer
+					cancelAndRunTimer()
+
 					if (exoPlayer.isPlaying) exoPlayer.pause()
 					else exoPlayer.play()
 				},
 				onPrevious = {
+					// Reset timer
+					cancelAndRunTimer()
 
+					viewModel.onAction(VideoAction.Previous)
 				},
 				onNext = {
+					// Reset timer
+					cancelAndRunTimer()
 
+					viewModel.onAction(VideoAction.Next)
 				}
 			)
 		},
@@ -227,6 +265,9 @@ private fun TopBar(
 	) {
 		TopAppBar(
 			modifier = modifier,
+			colors = TopAppBarDefaults.topAppBarColors(
+				containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.32f)
+			),
 			title = {
 				Text(
 					text = state.video?.displayName ?: "",
@@ -317,6 +358,7 @@ private fun BottomBar(
 	) {
 		Column(
 			modifier = Modifier
+				.background(MaterialTheme.colorScheme.surface.copy(alpha = 0.32f))
 				.padding(16.dp)
 				.then(modifier)
 		) {
