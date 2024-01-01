@@ -16,12 +16,38 @@ import androidx.core.view.WindowInsetsControllerCompat
 
 // Author: kafri8889
 
+/**
+ * @param onNavigationBarVisibilityChanged Called when navigation bar visibility changed
+ * @param onStatusBarVisibilityChanged Called when status bar visibility changed
+ * @param onSystemBarVisibilityChanged Called when navigation bar and status bar visibility changed
+ */
 @Composable
 fun rememberSystemBarsControllerState(
 	initialNavigationBarVisibility: SystemBarsVisibility = SystemBarsVisibility.Visible,
 	initialStatusBarVisibility: SystemBarsVisibility = SystemBarsVisibility.Visible,
+	onNavigationBarVisibilityChanged: (visibility: SystemBarsVisibility, state: SystemBarsControllerState) -> Unit = { _, _ -> },
+	onStatusBarVisibilityChanged: (visibility: SystemBarsVisibility, state: SystemBarsControllerState) -> Unit = { _, _ -> },
+	onSystemBarVisibilityChanged: (visibility: SystemBarsVisibility, state: SystemBarsControllerState) -> Unit = { _, _ -> },
 ): SystemBarsControllerState {
-	return remember { SystemBarsControllerState(initialNavigationBarVisibility, initialStatusBarVisibility) }
+	return remember {
+		SystemBarsControllerState(initialNavigationBarVisibility, initialStatusBarVisibility).apply {
+			setOnVisibilityChangedListener(
+				object : SystemBarsControllerState.OnVisibilityChangedListener {
+					override fun onNavigationBarVisibilityChanged(visibility: SystemBarsVisibility) {
+						onNavigationBarVisibilityChanged(visibility, this@apply)
+					}
+
+					override fun onStatusBarVisibilityChanged(visibility: SystemBarsVisibility) {
+						onStatusBarVisibilityChanged(visibility, this@apply)
+					}
+
+					override fun onSystemBarVisibilityChanged(visibility: SystemBarsVisibility) {
+						onSystemBarVisibilityChanged(visibility, this@apply)
+					}
+				}
+			)
+		}
+	}
 }
 
 @Composable
@@ -69,7 +95,13 @@ fun installSystemBarsController(
 
 enum class SystemBarsVisibility {
 	Visible,
-	Gone
+	Gone;
+
+	val isVisible: Boolean
+		get() = this == Visible
+
+	val isGone: Boolean
+		get() = this == Gone
 }
 
 class SystemBarsControllerState(
@@ -77,42 +109,83 @@ class SystemBarsControllerState(
 	initialStatusBarVisibility: SystemBarsVisibility
 ) {
 
+	private var onVisibilityChangedListener: OnVisibilityChangedListener? = null
+
 	private var navigationBarVisibility by mutableStateOf(initialNavigationBarVisibility)
 	private var statusBarVisibility by mutableStateOf(initialStatusBarVisibility)
 
 	val isNavigationBarVisible: Boolean
-		get() = navigationBarVisibility == SystemBarsVisibility.Visible
+		get() = navigationBarVisibility.isVisible
 
 	val isStatusBarVisible: Boolean
-		get() = statusBarVisibility == SystemBarsVisibility.Visible
+		get() = statusBarVisibility.isVisible
 
 	val isSystemBarVisible: Boolean
-		get() = navigationBarVisibility == SystemBarsVisibility.Visible && statusBarVisibility == SystemBarsVisibility.Visible
+		get() = navigationBarVisibility.isVisible && statusBarVisibility.isVisible
 
 	fun showNavigationBar() {
 		navigationBarVisibility = SystemBarsVisibility.Visible
+
+		onVisibilityChangedListener?.onNavigationBarVisibilityChanged(SystemBarsVisibility.Visible)
+		if (isSystemBarVisible) onVisibilityChangedListener?.onSystemBarVisibilityChanged(SystemBarsVisibility.Visible)
 	}
 
 	fun showStatusBar() {
 		statusBarVisibility = SystemBarsVisibility.Visible
+
+		onVisibilityChangedListener?.onStatusBarVisibilityChanged(SystemBarsVisibility.Visible)
+		if (isSystemBarVisible) onVisibilityChangedListener?.onSystemBarVisibilityChanged(SystemBarsVisibility.Visible)
 	}
 
 	fun showSystemBar() {
 		navigationBarVisibility = SystemBarsVisibility.Visible
 		statusBarVisibility = SystemBarsVisibility.Visible
+
+		onVisibilityChangedListener?.onSystemBarVisibilityChanged(SystemBarsVisibility.Visible)
 	}
 
 	fun hideNavigationBar() {
 		navigationBarVisibility = SystemBarsVisibility.Gone
+
+		onVisibilityChangedListener?.onNavigationBarVisibilityChanged(SystemBarsVisibility.Gone)
+		if (!isSystemBarVisible) onVisibilityChangedListener?.onSystemBarVisibilityChanged(SystemBarsVisibility.Gone)
 	}
 
 	fun hideStatusBar() {
 		statusBarVisibility = SystemBarsVisibility.Gone
+
+		onVisibilityChangedListener?.onStatusBarVisibilityChanged(SystemBarsVisibility.Gone)
+		if (!isSystemBarVisible) onVisibilityChangedListener?.onSystemBarVisibilityChanged(SystemBarsVisibility.Gone)
 	}
 
 	fun hideSystemBar() {
 		navigationBarVisibility = SystemBarsVisibility.Gone
 		statusBarVisibility = SystemBarsVisibility.Gone
+
+		onVisibilityChangedListener?.onSystemBarVisibilityChanged(SystemBarsVisibility.Gone)
+	}
+
+	fun setOnVisibilityChangedListener(listener: OnVisibilityChangedListener) {
+		onVisibilityChangedListener = listener
+	}
+
+	interface OnVisibilityChangedListener {
+
+		/**
+		 * Called when navigation bar visibility changed
+		 */
+		fun onNavigationBarVisibilityChanged(visibility: SystemBarsVisibility)
+
+		/**
+		 * Called when status bar visibility changed
+		 */
+		fun onStatusBarVisibilityChanged(visibility: SystemBarsVisibility)
+
+		/**
+		 * Called when status bar and navigation bar visibility changed
+		 */
+		fun onSystemBarVisibilityChanged(visibility: SystemBarsVisibility)
+
 	}
 
 }
